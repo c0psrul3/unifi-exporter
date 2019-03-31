@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
+import json
+import logging
+import pprint
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning, SNIMissingWarning, InsecurePlatformWarning
 
-import json
-import pprint
 from . import site
 
 class UniFiException(Exception):
@@ -30,9 +31,6 @@ class UniFi(object):
         requests.packages.urllib3.disable_warnings(SNIMissingWarning)
         requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
-    def debug(self, s):
-        print(s)
-
     def api_addr(self, endpoint):
         return self.addr + '/api/' + endpoint
 
@@ -46,7 +44,7 @@ class UniFi(object):
         return data
 
     def api_post(self, endpoint, payload):
-        self.debug('API POST ' + endpoint)
+        logging.debug('API POST ' + endpoint)
         try:
             r = self.session.post(self.api_addr(endpoint), data=json.dumps(payload), verify=False)
             return self.api_process_response(r)
@@ -60,7 +58,7 @@ class UniFi(object):
 
 
     def api_get(self, endpoint):
-        self.debug('API GET ' + endpoint)
+        logging.debug('API GET ' + endpoint)
         try:
             r = self.session.get(self.api_addr(endpoint), verify=False)
             return self.api_process_response(r)
@@ -87,6 +85,7 @@ class UniFi(object):
         # < Set-Cookie: unifises=k8U3umwhciVfp8e43evU95mwQI3eAxK3; Path=/; Secure; HttpOnly
         # < Set-Cookie: csrf_token=k8U3umwhciVfp8e43evU95mwQI3eAxK3; Path=/; Secure
         # { "data" : [ ] , "meta" : { "rc" : "ok"}}
+        logging.info('Login ' + self.addr)
         payload = { 'username': self.username, 'password': self.password }
         self.api_post('login', payload)
 

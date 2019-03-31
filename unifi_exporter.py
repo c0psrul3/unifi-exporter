@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import logging
 import os
 import pprint
 from prometheus_client import start_http_server, Gauge
@@ -26,6 +27,7 @@ class UnifiCollector(object):
             raise AssertionError('API/Username and API/Password is required in configuration')
 
     def collect(self):
+        logging.info('Collect ' + self.apiendpoint)
         metrics = {}
 
         metrics['c_sta_rx_bytes'] = CounterMetricFamily('unifi_sta_rx_bytes', 'Client RX bytes',    labels=['mac', 'hostname', 'radio', 'essid'])
@@ -73,7 +75,7 @@ class UnifiCollector(object):
         metrics['g_general_temperature']= GaugeMetricFamily('unifi_general_temperature',      'General temperature',labels=['mac', 'hostname'])
 
         for site in self.unifi.sites():
-            self.unifi.debug('SITE: ' + site.name)
+            logging.debug('SITE: ' + site.name)
             for dev in site.device():
                 if dev.model == 'U7PG2' or dev.model == 'U7HD':
                     for vap in dev.vap:
@@ -156,7 +158,7 @@ class UnifiCollector(object):
                             metrics['c_port_tx_packets'].add_metric(labels, int(port.get('tx_packets')))
                             metrics['c_port_tx_dropped'].add_metric(labels, int(port.get('tx_dropped')))
                 else:
-                    self.unifi.debug('Cannot collect stats for device of model ' + dev.model)
+                    logging.warning('Cannot collect stats for device of model ' + dev.model)
                     continue
 
                 labels = [
