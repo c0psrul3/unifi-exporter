@@ -51,7 +51,7 @@ class U7PG2(device.Device):
 #                      u'num_port': 2}],
 # u'fw_caps': 16151,
 # u'guest-num_sta': 0,
-# u'guest_token': u'D8E63428EAB9B664EA7A3001BFA2685D',
+# u'guest_token': u'...',
 # u'has_eth1': False,
 # u'has_speaker': False,
 # u'inform_ip': u'192.168.1.3',

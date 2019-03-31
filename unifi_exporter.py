@@ -1,28 +1,25 @@
 #!/usr/bin/env python3
 
-import time
+import argparse
+import os
+import pprint
 from prometheus_client import start_http_server, Gauge
 from prometheus_client.core import GaugeMetricFamily, CounterMetricFamily, REGISTRY
-import configparser
-import argparse
+import time
 from unifi import unifi
-import pprint
 
 PORT = 9108
 
 class UnifiCollector(object):
-    def __init__(self, configfile):
-        self.readconfig(configfile)
+    def __init__(self):
+        self.apiendpoint = os.environ.get('API_URL', 'https://localhost:8443')
+        self.apiusername = os.environ.get('API_USERNAME', 'ubnt')
+        self.apipassword = os.environ.get('API_PASSWORD', 'ubnt')
+        self.checkconfig()
+
         self.unifi = unifi.UniFi(self.apiendpoint, self.apiusername, self.apipassword)
 
-    def readconfig(self, configfile):
-        config = configparser.ConfigParser()
-        config.read(configfile)
-        self.apiendpoint = config.get('API','URL')
-        self.apiusername = config.get('API','Username')
-        self.apipassword = config.get('API','Password')
-
-        # Just as a help really, code will not be reached as config.get() will blow up
+    def checkconfig(self):
         if self.apiendpoint is None:
             raise AssertionError('API/URL is required in configuration')
         if self.apiusername is None or self.apipassword is None:
@@ -256,13 +253,11 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='UniFi Prometheus exporter')
     parser.add_argument('--port', dest='port', default=PORT, help='Port to listen to')
-    parser.add_argument('--config', dest='config', default=None, required=True, help='Configuration file for API')
 
     args = parser.parse_args()
-    configfile = args.config
     port = args.port
 
-    REGISTRY.register(UnifiCollector(configfile))
+    REGISTRY.register(UnifiCollector())
     start_http_server(port)
     try:
         while True:

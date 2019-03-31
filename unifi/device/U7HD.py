@@ -54,7 +54,7 @@ class U7HD(device.Device):
 #                      u'num_port': 1}],
 # u'fw_caps': 196271,
 # u'guest-num_sta': 0,
-# u'guest_token': u'0F182774FC9DF27C344846FD62DBAC66',
+# u'guest_token': u'...',
 # u'has_eth1': True,
 # u'has_speaker': False,
 # u'inform_ip': u'192.168.1.3',

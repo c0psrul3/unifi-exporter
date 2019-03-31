@@ -57,7 +57,7 @@ class US8P150(device.Device):
 #     "general_temperature": 63,
 #     "guest-num_sta": 0,
 #     "has_fan": false,
-#     "inform_authkey": "3425eab132ef4e9ba4e7b939e33731cc",
+#     "inform_authkey": "...",
 #     "inform_ip": "192.168.1.3",
 #     "inform_url": "http://192.168.1.3:8080/inform",
 #     "ip": "192.168.1.226",
@@ -556,6 +556,6 @@ class US8P150(device.Device):
 #     "uptime": 3641077,
 #     "user-num_sta": 22,
 #     "version": "3.3.12.3861",
-#     "x_authkey": "3425eab132ef4e9ba4e7b939e33731cc",
+#     "x_authkey": "...",
 #     "x_fingerprint": "70:b5:2e:d2:ec:59:6d:18:fb:11:12:d9:cb:8d:8f:74"
 # }

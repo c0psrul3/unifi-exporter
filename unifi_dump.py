@@ -1,22 +1,18 @@
 #!/usr/bin/env python3
 
 import time
-import configparser
+import os
 import argparse
 import pprint
 from unifi import unifi
 
 parser = argparse.ArgumentParser(description='UniFi Prometheus dump')
-parser.add_argument('--config', dest='config', default=None, required=True, help='Configuration file for API')
 
 args = parser.parse_args()
-configfile = args.config
 
-config = configparser.ConfigParser()
-config.read(configfile)
-apiendpoint = config.get('API','URL')
-apiusername = config.get('API','Username')
-apipassword = config.get('API','Password')
+apiendpoint = os.environ.get('API_URL', 'https://localhost:8443')
+apiusername = os.environ.get('API_USERNAME', 'ubnt')
+apipassword = os.environ.get('API_PASSWORD', 'ubnt')
 
 unifi = unifi.UniFi(apiendpoint, apiusername, apipassword)
 

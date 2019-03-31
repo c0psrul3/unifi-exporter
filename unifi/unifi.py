@@ -88,7 +88,7 @@ class UniFi(object):
         # < Set-Cookie: csrf_token=k8U3umwhciVfp8e43evU95mwQI3eAxK3; Path=/; Secure
         # { "data" : [ ] , "meta" : { "rc" : "ok"}}
         payload = { 'username': self.username, 'password': self.password }
-        data = self.api_post('login', payload)
+        self.api_post('login', payload)
 
     def sites(self):
         # https://hemma:8443/api/self/sites
