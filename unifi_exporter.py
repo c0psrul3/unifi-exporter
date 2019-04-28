@@ -158,32 +158,34 @@ class UnifiCollector(object):
                 metrics['c_port_tx_dropped'].add_metric(labels, int(port.get('tx_dropped')))
 
     def add_metric_common_uplink(self, dev, metrics):
-        labels = [
-                dev.mac,
-                dev.name,
-                dev.model
-                ]
-        metrics['c_uplink_rx_bytes'].add_metric(labels,   int(dev.uplink.get('rx_bytes')))
-        metrics['c_uplink_tx_bytes'].add_metric(labels,   int(dev.uplink.get('tx_bytes')))
-        metrics['c_uplink_rx_errors'].add_metric(labels,  int(dev.uplink.get('rx_errors')))
-        metrics['c_uplink_tx_errors'].add_metric(labels,  int(dev.uplink.get('tx_errors')))
-        metrics['c_uplink_rx_packets'].add_metric(labels, int(dev.uplink.get('rx_packets')))
-        metrics['c_uplink_tx_packets'].add_metric(labels, int(dev.uplink.get('tx_packets')))
-        metrics['c_uplink_rx_dropped'].add_metric(labels, int(dev.uplink.get('rx_dropped')))
-        metrics['c_uplink_tx_dropped'].add_metric(labels, int(dev.uplink.get('tx_dropped')))
+        if dev.uplink:
+            labels = [
+                    dev.mac,
+                    dev.name,
+                    dev.model
+                    ]
+            metrics['c_uplink_rx_bytes'].add_metric(labels,   int(dev.uplink.get('rx_bytes')))
+            metrics['c_uplink_tx_bytes'].add_metric(labels,   int(dev.uplink.get('tx_bytes')))
+            metrics['c_uplink_rx_errors'].add_metric(labels,  int(dev.uplink.get('rx_errors')))
+            metrics['c_uplink_tx_errors'].add_metric(labels,  int(dev.uplink.get('tx_errors')))
+            metrics['c_uplink_rx_packets'].add_metric(labels, int(dev.uplink.get('rx_packets')))
+            metrics['c_uplink_tx_packets'].add_metric(labels, int(dev.uplink.get('tx_packets')))
+            metrics['c_uplink_rx_dropped'].add_metric(labels, int(dev.uplink.get('rx_dropped')))
+            metrics['c_uplink_tx_dropped'].add_metric(labels, int(dev.uplink.get('tx_dropped')))
 
     def add_metric_common_sysstat(self, dev, metrics):
-        labels = [
-                dev.mac,
-                dev.name,
-                dev.model
-                ]
-        metrics['g_loadavg_1'].add_metric(labels, float(dev.sysstat.get('loadavg_1')))
-        metrics['g_loadavg_5'].add_metric(labels, float(dev.sysstat.get('loadavg_5')))
-        metrics['g_loadavg_15'].add_metric(labels, float(dev.sysstat.get('loadavg_15')))
-        metrics['g_mem_total'].add_metric(labels, float(dev.sysstat.get('mem_total')))
-        metrics['g_mem_used'].add_metric(labels, float(dev.sysstat.get('mem_used')))
-        metrics['g_mem_buffer'].add_metric(labels, float(dev.sysstat.get('mem_buffer')))
+        if dev.sysstat:
+            labels = [
+                    dev.mac,
+                    dev.name,
+                    dev.model
+                    ]
+            metrics['g_loadavg_1'].add_metric(labels, float(dev.sysstat.get('loadavg_1')))
+            metrics['g_loadavg_5'].add_metric(labels, float(dev.sysstat.get('loadavg_5')))
+            metrics['g_loadavg_15'].add_metric(labels, float(dev.sysstat.get('loadavg_15')))
+            metrics['g_mem_total'].add_metric(labels, float(dev.sysstat.get('mem_total')))
+            metrics['g_mem_used'].add_metric(labels, float(dev.sysstat.get('mem_used')))
+            metrics['g_mem_buffer'].add_metric(labels, float(dev.sysstat.get('mem_buffer')))
 
 
     def add_metric_site_sta(self, client, metrics):
@@ -215,7 +217,7 @@ class UnifiCollector(object):
         for site in self.unifi.sites():
             logging.debug('SITE: ' + site.name)
             for dev in site.device():
-                if dev.model == 'U7PG2' or dev.model == 'U7HD':
+                if dev.model in ('U7PG2', 'U7HD'):
                     self.add_metric_u7(dev, metrics)
                 elif dev.model == 'US8P150':
                     self.add_metric_us8(dev, metrics)
@@ -225,10 +227,8 @@ class UnifiCollector(object):
                     logging.warning('Cannot collect stats for device of model ' + dev.model)
                     continue
 
-                if dev.uplink:
-                    self.add_metric_common_uplink(dev, metrics)
-                if dev.sysstat:
-                    self.add_metric_common_sysstat(dev, metrics)
+                self.add_metric_common_uplink(dev, metrics)
+                self.add_metric_common_sysstat(dev, metrics)
 
             for client in site.sta():
                 self.add_metric_site_sta(client, metrics)
