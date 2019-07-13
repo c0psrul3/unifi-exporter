@@ -5,10 +5,10 @@ RUN adduser --disabled-password --no-create-home --home /app  --gecos '' --ingro
 
 COPY requirements.txt /app/
 COPY unifi/ /app/unifi/
-COPY unifi_dump.py unifi_exporter.py /app/
+COPY unifi-dump.py unifi-exporter.py /app/
 
 RUN /usr/local/bin/pip3.7 install -r /app/requirements.txt
 
 EXPOSE 9108
 
-CMD ["/usr/local/bin/python",  "/app/unifi_exporter.py"]
+CMD ["/usr/local/bin/python",  "/app/unifi-exporter.py"]
