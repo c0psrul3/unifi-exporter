@@ -9,9 +9,9 @@ class U7PG2(device.Device):
         self.vap = []
         self.parse_radio(data['radio_table'])
         self.parse_stat(data['stat'])
-        self.parse_uplink(data['uplink'])
-        self.parse_vap_table(data['vap_table'])
-        self.parse_sysstat(data['sys_stats'])
+        self.parse_uplink(data.get('uplink'))
+        self.parse_vap_table(data.get('vap_table'))
+        self.parse_sysstat(data.get('sys_stats'))
 
     def parse_radio(self, data):
         for radio in data:
@@ -19,8 +19,9 @@ class U7PG2(device.Device):
             self.radio[rstr] = radio
 
     def parse_vap_table(self, data):
-        for vap in data:
-            self.vap.append(vap)
+        if data:
+            for vap in data:
+                self.vap.append(vap)
 
 # {u'_id': u'596a2b19b410d0fb1442515e',
 # u'_uptime': 3515944,
