@@ -251,6 +251,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='UniFi Prometheus exporter')
     parser.add_argument('--port', dest='port', default=PORT, help='Port to listen to')
 
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+
     args = parser.parse_args()
     port = args.port
 
