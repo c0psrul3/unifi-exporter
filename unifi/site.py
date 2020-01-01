@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from .device import US8P150, U7PG2, U7HD, UGW3
+from .device import US8P150, U7PG2, U7HD, UGW3, U7LT
 
 class Site(object):
     def __init__(self, unifi, data):
@@ -24,6 +24,8 @@ class Site(object):
                 ret.append(U7PG2.U7PG2(self, d))
             elif d['model'] == 'U7HD':
                 ret.append(U7HD.U7HD(self, d))
+            elif d['model'] == 'U7LT':
+                ret.append(U7LT.U7LT(self, d))
             elif d['model'] == 'UGW3':
                 ret.append(UGW3.UGW3(self, d))
             else:

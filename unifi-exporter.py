@@ -217,7 +217,7 @@ class UnifiCollector(object):
         for site in self.unifi.sites():
             logging.debug('SITE: ' + site.name)
             for dev in site.device():
-                if dev.model in ('U7PG2', 'U7HD'):
+                if dev.model in ('U7PG2', 'U7HD', 'U7LT'):
                     self.add_metric_u7(dev, metrics)
                 elif dev.model == 'US8P150':
                     self.add_metric_us8(dev, metrics)
