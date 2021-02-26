@@ -9,7 +9,7 @@ class U7LT(device.Device):
         self.vap = []
         self.parse_radio(data['radio_table'])
         self.parse_stat(data['stat'])
-        self.parse_uplink(data['uplink'])
+        self.parse_uplink(data.get('uplink'))
         self.parse_vap_table(data['vap_table'])
         self.parse_sysstat(data['sys_stats'])
 
