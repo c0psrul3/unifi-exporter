@@ -115,6 +115,6 @@ class UniFi(object):
         # { "data" : [ { "_id" : "56c87bc1b41038d25762ce86" , "attr_hidden_id" : "default" , "attr_no_delete" : true , "desc" : "Default" , "name" : "default" , "num_ap" : 2 , "num_sta" : 22 , "role" : "admin"}] , "meta" : { "rc" : "ok"}}
         data = self.api_get('self/sites')
         ret = []
-        for s in data['data']:
+        for s in data.get('data'):
             ret.append(site.Site(self, s))
         return ret
