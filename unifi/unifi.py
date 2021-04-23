@@ -31,27 +31,40 @@ class UniFi(object):
         requests.packages.urllib3.disable_warnings(SNIMissingWarning)
         requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
+    '''
+    Unifi API endpoints are described in wiki:
+        (https://ubntwiki.com/products/software/unifi-controller/api)
+    '''
     def api_addr(self, endpoint):
-        return self.addr + '/api/' + endpoint
+        if endpoint == "login":
+            return self.addr + '/api/auth/' + endpoint
+        if endpoint == "status":
+            return self.addr + '/proxy/network/' + endpoint
+        else:
+            #print(self.addr + '/proxy/network/api/' + endpoint)
+            return self.addr + '/proxy/network/api/' + endpoint
 
     def clear_session(self):
         self.session.cookies.clear()
 
     def api_process_response(self, r):
-        data = r.json()
         # Will raise exceptions if failing
-        self.set_error(data)
+        self.set_error(r)
+        # parse json output
+        data = r.json()
         return data
 
     def api_post(self, endpoint, payload):
         logging.debug('API POST ' + endpoint)
         try:
-            r = self.session.post(self.api_addr(endpoint), data=json.dumps(payload), verify=False)
+            headers = {"Accept": "application/json", "Content-Type": "application/json"}
+            r = self.session.post(self.api_addr(endpoint), headers = headers, json = payload, verify=False, timeout = 1)
+            self.set_error(r)
             return self.api_process_response(r)
         except UniFiException as e:
             if endpoint != 'login' and e.apimsg is not None and e.apimsg == 'api.err.LoginRequired':
                 self.login()
-                r = self.session.post(self.api_addr(endpoint), data=json.dumps(payload), verify=False)
+                r = self.session.post(self.api_addr(endpoint), headers = headers, json = payload, verify = False, timeout = 1)
                 return self.api_process_response(r)
             else:
                 raise e
@@ -59,25 +72,32 @@ class UniFi(object):
 
     def api_get(self, endpoint):
         logging.debug('API GET ' + endpoint)
+        headers = {"Accept": "application/json", "Content-Type": "application/json"}
         try:
-            r = self.session.get(self.api_addr(endpoint), verify=False)
+            r = self.session.get(self.api_addr(endpoint), headers = headers, verify = False, timeout = 1)
             return self.api_process_response(r)
         except UniFiException as e:
             if e.apimsg is not None and e.apimsg == 'api.err.LoginRequired':
                 self.login()
-                r = self.session.get(self.api_addr(endpoint), verify=False)
+                r = self.session.get(self.api_addr(endpoint), headers = headers, verify = False, timeout = 1)
                 return self.api_process_response(r)
             else:
                 raise e
 
 
-    def set_error(self, data):
-        if data['meta']['rc'] == 'ok':
+
+    def set_error(self, r):
+        if r.status_code != 200:
+            print("ERROR - Status Code: ", status_code)
             return
-        elif data['meta']['rc'] == 'error':
-            raise UniFiException(data['meta']['msg'])
-        else:
-            raise UniFiException(None, 'FAIL: \n' + pprint.pformat(data))
+        data = r.json()
+        if 'meta' in data:
+            if data['meta']['rc'] == 'ok':
+                return
+            elif data['meta']['rc'] == 'error':
+                raise UniFiException(data['meta']['msg'])
+            else:
+                raise UniFiException(None, 'FAIL: \n' + pprint.pformat(data))
 
     def login(self):
         # https://hemma:8443/api/login
