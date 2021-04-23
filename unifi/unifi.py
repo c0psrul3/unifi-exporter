@@ -26,6 +26,7 @@ class UniFi(object):
         self.password = password
         self.cookies = {}
         self.session = requests.Session()
+        self.login()
 
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         requests.packages.urllib3.disable_warnings(SNIMissingWarning)
