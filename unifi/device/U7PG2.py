@@ -1,3 +1,4 @@
+# UAP-AC-Pro
 from . import device
 
 class U7PG2(device.Device):

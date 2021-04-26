@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from .device import US8P150, U7PG2, U7HD, UGW3, U7LT
+from .device import *
 
 class Site(object):
     def __init__(self, unifi, data):
@@ -18,18 +18,30 @@ class Site(object):
         data = self.unifi.api_get(self.api_endpoint('stat/device'))
         ret = []
         for d in data['data']:
-            if d['model'] == 'US8P150':
+            if d['model'] == 'UGW3':
+                ret.append(UGW3.UGW3(self, d))
+            elif d['model'] == 'US8P150':
                 ret.append(US8P150.US8P150(self, d))
+            elif d['model'] == 'USL16LP':
+                ret.append(USL16LP.USL16LP(self, d))
+            elif d['model'] == 'USL8LP':
+                ret.append(USL8LP.USL8LP(self, d))
+            elif d['model'] == 'USMINI':
+                ret.append(USMINI.USMINI(self, d))
+            elif d['model'] == 'USF5P':
+                ret.append(USF5P.USF5P(self, d))
             elif d['model'] == 'U7PG2':
                 ret.append(U7PG2.U7PG2(self, d))
             elif d['model'] == 'U7HD':
                 ret.append(U7HD.U7HD(self, d))
             elif d['model'] == 'U7LT':
                 ret.append(U7LT.U7LT(self, d))
-            elif d['model'] == 'UGW3':
-                ret.append(UGW3.UGW3(self, d))
+            elif d['model'] == 'U7NHD':
+                ret.append(U7NHD.U7NHD(self, d))
+            elif d['model'] == 'UHDIW':
+                ret.append(UHDIW.UHDIW(self, d))
             else:
-                print("Unknown model: {0}".format((d['model'])))
+                print(f"Unknown device type/model: {d['type']}/{d['model']}")
 
         return ret
 
