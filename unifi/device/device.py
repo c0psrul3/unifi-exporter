@@ -1,14 +1,14 @@
 class Device(object):
     def __init__(self, site, data):
         self.site = site
-        self.name = data.get('name', "")
+        self.name = data.get('name', data.get('hostname', data.get('mac')))
         self.type = data.get('type', "")
         self.model = data.get('model', "")
         self.id = data.get('_id', "")
         self.device_id = data.get('device_id', "")
         self.adopted = str(data.get('adopted', 0))
-        self.ip_address = str(data.get('ip',""))
-        self.hostname = str(data.get('hostname',""))
+        self.ip_address = str(data.get('ip', ""))
+        self.hostname = str(data.get('hostname', data.get('ip', "")))
         self.mac = str(data.get('mac', ""))
         self.serial = str(data.get('serial', ""))
         self.version = str(data.get('version', ""))
