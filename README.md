@@ -55,7 +55,7 @@ Unifi Controller Metrics Exporter for Prometheus
 
 ### Start exporter listening on default port TCP/9108
   ```sh
-  API_URL=https://192.168.0.3 API_USERNAME=prometheus API_PASSWORD=Fa7saiwelusu7Wei python3 unifi-exporter.py --port=9118
+  API_URL=https://192.168.0.3 API_USERNAME=ubnt API_PASSWORD=ubnt python3 unifi-exporter.py --port=9108
   ```
 
 ### Install Systemd Service Unit
