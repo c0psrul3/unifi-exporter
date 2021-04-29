@@ -65,6 +65,3 @@ Unifi Controller Metrics Exporter for Prometheus
   ```
 
 
-
-
-# vim: set ft=markdown :
