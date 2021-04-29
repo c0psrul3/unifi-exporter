@@ -6,20 +6,60 @@ import pprint
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning, SNIMissingWarning, InsecurePlatformWarning
 
-from . import site
+from . import device
 
-class UniFiException(Exception):
-    apimsg = None
+class Site(object):
 
-    def __init__(self, apimsg, s=None):
-        m = s
-        if m is None:
-            m = apimsg
-        super(UniFiException, self).__init__(m)
+    def __init__(self, unifi, data):
+        self.unifi = unifi
+        self.id = data['_id']
+        self.desc = data['desc']
+        self.name = data['name']
+        self.role = data['role']
 
-        self.apimsg = apimsg
+    def api_endpoint(self, endpoint):
+        return 's/' + self.name + '/' + endpoint
 
-class UniFi(object):
+    def device(self):
+        # https://hemma:8443/api/s/default/stat/device
+
+        data = self.unifi.api_get(self.api_endpoint('stat/device'))
+        ret = []
+        for d in data['data']:
+            if d['model'] == 'UGW3':
+                ret.append(device.UGW3(self, d))
+            elif d['model'] == 'US8P150':
+                ret.append(device.US8P150(self, d))
+            elif d['model'] == 'USL16LP':
+                ret.append(device.USL16LP(self, d))
+            elif d['model'] == 'USL8LP':
+                ret.append(device.USL8LP(self, d))
+            elif d['model'] == 'USMINI':
+                ret.append(device.USMINI(self, d))
+            elif d['model'] == 'USF5P':
+                ret.append(device.USF5P(self, d))
+            elif d['model'] == 'U7PG2':
+                ret.append(device.U7PG2(self, d))
+            elif d['model'] == 'U7HD':
+                ret.append(device.U7HD(self, d))
+            elif d['model'] == 'U7LT':
+                ret.append(device.U7LT(self, d))
+            elif d['model'] == 'U7NHD':
+                ret.append(device.U7NHD(self, d))
+            elif d['model'] == 'UHDIW':
+                ret.append(device.UHDIW(self, d))
+            else:
+                print(f"Unknown device type/model: {d['type']}/{d['model']}")
+
+        return ret
+
+    def sta(self):
+        # https://hemma:8443/api/s/default/stat/sta
+        data = self.unifi.api_get(self.api_endpoint('stat/sta'))
+        return data['data']
+
+
+class Network(object):
     def __init__(self, addr, username, password):
         self.addr = addr
         self.username = username
@@ -116,5 +156,6 @@ class UniFi(object):
         data = self.api_get('self/sites')
         ret = []
         for s in data.get('data'):
-            ret.append(site.Site(self, s))
+            ret.append(Site(self, s))
         return ret
+

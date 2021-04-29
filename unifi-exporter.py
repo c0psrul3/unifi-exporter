@@ -8,7 +8,7 @@ from prometheus_client import start_http_server, Gauge
 from prometheus_client.core import GaugeMetricFamily, CounterMetricFamily, SummaryMetricFamily, InfoMetricFamily, REGISTRY
 #from prometheus_client.core import StateSetMetricFamily, HistogramMetricFamily, UnknownMetricFamily, UntypedMetricFamily
 import time
-from unifi import unifi
+import unifi
 
 PORT = 9108
 
@@ -19,7 +19,7 @@ class UnifiCollector(object):
         self.apipassword = os.environ.get('API_PASSWORD', 'ubnt')
         self.checkconfig()
 
-        self.unifi = unifi.UniFi(self.apiendpoint, self.apiusername, self.apipassword)
+        self.unifi = unifi.Network(self.apiendpoint, self.apiusername, self.apipassword)
 
     def checkconfig(self):
         if self.apiendpoint is None:

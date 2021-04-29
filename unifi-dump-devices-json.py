@@ -5,7 +5,7 @@ import os
 import argparse
 import pprint
 import json
-from unifi import unifi
+import unifi
 
 parser = argparse.ArgumentParser(description='UniFi Prometheus dump')
 
@@ -15,7 +15,7 @@ apiendpoint = os.environ.get('API_URL', 'https://localhost:8443')
 apiusername = os.environ.get('API_USERNAME', 'ubnt')
 apipassword = os.environ.get('API_PASSWORD', 'ubnt')
 
-u = unifi.UniFi(apiendpoint, apiusername, apipassword)
+u = unifi.Network(apiendpoint, apiusername, apipassword)
 
 
 # Just as a help really, code will not be reached as config.get() will blow up
