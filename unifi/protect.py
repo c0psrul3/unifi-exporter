@@ -26,10 +26,7 @@ class Protect(object):
     def api_addr(self, endpoint):
         if endpoint == "login":
             return self.addr + '/api/auth/' + endpoint
-        if endpoint == "status":
-            return self.addr + '/proxy/protect/' + endpoint
         else:
-            #print(self.addr + '/proxy/protect/api/' + endpoint)
             return self.addr + '/proxy/protect/api/' + endpoint
 
     def clear_session(self):
@@ -96,5 +93,17 @@ class Protect(object):
         logging.info('Login ' + self.addr)
         payload = { 'username': self.username, 'password': self.password }
         self.api_post('login', payload)
+
+
+class UniFiException(Exception):
+    apimsg = None
+
+    def __init__(self, apimsg, s=None):
+        m = s
+        if m is None:
+            m = apimsg
+        super(UniFiException, self).__init__(m)
+
+        self.apimsg = apimsg
 
 
