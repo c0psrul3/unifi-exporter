@@ -274,6 +274,26 @@ class UnifiCollector(object):
             metrics['g_mem_buffer'].add_metric(labels, float(dev.sysstat.get('mem_buffer', 0.0)))
 
 
+    
+    def add_metric_site_health(self, site_name, health, metrics):
+        for subsystem in health:
+            subsystem_name = subsystem.pop('subsystem')
+            labels = [ site_name, subsystem_name ]
+            status = subsystem.pop('status')
+            metrics[f'subsystem_{subsystem_name}_up'] = GaugeMetricFamily(f'unifi_subsystem_{subsystem_name}_up', f'Status for subsystem {subsystem_name}', labels=['site', 'subsystem'])
+            if status == "unknown":
+                metrics[f'subsystem_{subsystem_name}_up'].add_metric(labels, -1)
+                continue
+            if status == "warning":
+                metrics[f'subsystem_{subsystem_name}_up'].add_metric(labels, 0)
+            if status == "ok":
+                metrics[f'subsystem_{subsystem_name}_up'].add_metric(labels, 1)
+            for k,v in subsystem.items():
+                if k.startswith("num_"):
+                    metric_name = f"health_{subsystem_name}_{k}"
+                    metrics[metric_name] = GaugeMetricFamily(f'unifi_{metric_name}', f'Metric {metric_name} for Subsystem {subsystem_name}', labels=['site', 'subsystem'])
+                    metrics[metric_name].add_metric(labels, int(v))
+
     def add_metric_site_sta(self, client, metrics):
         if client.get('rx_bytes') is None:
             return
@@ -304,6 +324,9 @@ class UnifiCollector(object):
 
         for site in self.unifi.sites():
             logging.debug('SITE: ' + site.name)
+
+            self.add_metric_site_health(site.name, site.health(), metrics)
+
             for dev in site.device():
                 if dev.model in ('U7PG2', 'U7HD', 'U7NHD', 'U7LT', 'UHDIW'):
                     self.add_metric_device_info(dev, metrics)
