@@ -1,0 +1,31 @@
+#  UniFi Exporter
+#  ==============
+#  Export Metrics from UniFi Controller
+#
+#  Unifi-Exporter listens on port TCP/9108 by default
+
+[Unit]
+Description=UniFi Exporter
+Documentation=https://github.com/c0psrul3/unifi-exporter
+# Require network before starting barrierc
+Wants=network-online.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5s
+WorkingDirectory=/home/c0psrul3/src/UniFi/unifi-exporter.c0psrul3
+Environment=UNIFI_EXPORTER_PORT=9108
+Environment=API_URL=https://172.16.125.253
+Environment=API_USERNAME=prometheus
+Environment=API_PASSWORD=Fa7saiwelusu7Wei
+EnvironmentFile=-/etc/default/unifi-exporter
+#ExecStartPre=
+ExecStart=/usr/bin/python3 unifi-exporter.py --port=${UNIFI_EXPORTER_PORT}
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/bin/kill -INT $MAINPID
+
+[Install]
+# Install to default target
+WantedBy=default.target
+Alias=prometheus-unifi-exporter.service
